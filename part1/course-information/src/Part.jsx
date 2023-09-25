@@ -1,11 +1,11 @@
 // import React from "react";
 
-function Part(props) {
+function Part({ part }) {
   //   console.log(props);
   return (
     <>
       <p>
-        {props.part} {props.exercise}
+        {part.name} {part.exercises}
       </p>
     </>
   );
