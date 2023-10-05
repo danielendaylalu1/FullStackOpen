@@ -5,6 +5,7 @@ import Persons from "./components/Persons";
 import { useEffect } from "react";
 import { getAllPersons, addPerson, updatePerson } from "./services/persons";
 import { deletePerson } from "./services/persons";
+import Message from "./components/Message";
 // import axios from "axios";
 
 const App = () => {
@@ -12,7 +13,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
-
+  const [message, setMessage] = useState(null);
   const personsToShow = persons.filter((person) =>
     person.name.toLowerCase().includes(filter.trim())
   );
@@ -46,6 +47,10 @@ const App = () => {
       };
       // setPersons(persons.concat(nameObject));
       addPerson(nameObject).then((data) => setPersons(persons.concat(data)));
+      setMessage(`Added ${newName}`);
+      setTimeout(() => {
+        setMessage(null);
+      }, 3000);
       setNewName("");
       setNewNumber("");
     }
@@ -80,7 +85,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-
+      <Message message={message} />
       <Filter filter={filter} handleFilter={handleFilter} />
       <h2>Add a new</h2>
 
