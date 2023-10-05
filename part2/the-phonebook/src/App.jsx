@@ -3,7 +3,8 @@ import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import { useEffect } from "react";
-import { getAllPersons, addPerson } from "./services/persons";
+import { getAllPersons, addPerson, updatePerson } from "./services/persons";
+import { deletePerson } from "./services/persons";
 // import axios from "axios";
 
 const App = () => {
@@ -19,8 +20,24 @@ const App = () => {
   const addName = (e) => {
     e.preventDefault();
     console.log(e.target);
-    if (persons.find((person) => person.name === newName)) {
+    if (
+      persons.find((person) => person.name === newName) &&
+      persons.find((person) => person.number === newNumber)
+    ) {
       alert(`${newName} is already added to phonebook`);
+    } else if (persons.find((person) => person.name === newName)) {
+      const updatedPerson = persons.find((person) => person.name === newName);
+      const text = `${updatedPerson.name} is already added to phonebook, replace the old number with the new one ?`;
+      if (confirm(text) === true) {
+        const personObject = { ...updatedPerson, number: newNumber };
+        updatePerson(updatedPerson.id, personObject).then((data) => {
+          setPersons(
+            persons.map((person) =>
+              person.id !== personObject.id ? person : data
+            )
+          );
+        });
+      }
     } else {
       const nameObject = {
         name: newName.trim(),
@@ -29,6 +46,8 @@ const App = () => {
       };
       // setPersons(persons.concat(nameObject));
       addPerson(nameObject).then((data) => setPersons(persons.concat(data)));
+      setNewName("");
+      setNewNumber("");
     }
   };
   const handleNewName = (e) => {
@@ -41,6 +60,18 @@ const App = () => {
   };
   const handleFilter = (e) => {
     setFilter(e.target.value);
+  };
+
+  const deleteHandler = (person) => {
+    const text = `Delete ${person.name} ?`;
+    if (confirm(text) === true) {
+      deletePerson(person.id).then(() => {
+        const deletedPerson = persons.find((item) => item.id === person.id);
+        setPersons(persons.filter((person) => person.id !== deletedPerson.id));
+      });
+    } else {
+      return;
+    }
   };
 
   useEffect(() => {
@@ -62,7 +93,12 @@ const App = () => {
       />
       <h2>Numbers</h2>
 
-      <Persons personsToShow={personsToShow} />
+      <Persons
+        personsToShow={personsToShow}
+        setPersons={setPersons}
+        persons={persons}
+        deleteHandler={deleteHandler}
+      />
     </div>
   );
 };
