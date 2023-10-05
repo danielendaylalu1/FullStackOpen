@@ -2,7 +2,7 @@ const Message = ({ message }) => {
   if (message === null) {
     return;
   } else {
-    return <div>{message}</div>;
+    return <div className="message">{message}</div>;
   }
 };
 

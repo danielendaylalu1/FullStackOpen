@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { getAllPersons, addPerson, updatePerson } from "./services/persons";
 import { deletePerson } from "./services/persons";
 import Message from "./components/Message";
+import "./index.css";
 // import axios from "axios";
 
 const App = () => {
@@ -38,6 +39,10 @@ const App = () => {
             )
           );
         });
+        setMessage(`Old number is changed to ${newNumber}`);
+        setTimeout(() => {
+          setMessage(null);
+        }, 3000);
       }
     } else {
       const nameObject = {
