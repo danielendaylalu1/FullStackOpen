@@ -3,7 +3,8 @@ import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import { useEffect } from "react";
-import axios from "axios";
+import { getAllPersons, addPerson } from "./services/persons";
+// import axios from "axios";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -26,7 +27,8 @@ const App = () => {
         number: newNumber.trim(),
         id: persons.length + 1,
       };
-      setPersons(persons.concat(nameObject));
+      // setPersons(persons.concat(nameObject));
+      addPerson(nameObject).then((data) => setPersons(persons.concat(data)));
     }
   };
   const handleNewName = (e) => {
@@ -42,9 +44,7 @@ const App = () => {
   };
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then((resp) => setPersons(resp.data));
+    getAllPersons().then((data) => setPersons(data));
   }, []);
   return (
     <div>
