@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 const App = () => {
   const [countries, setCountries] = useState([]);
   const [shown, setShown] = useState([]);
-  const [display, setDisplay] = useState(false);
+  // const [display, setDisplay] = useState(false);
+  // const [toshow, setToShow] = useState("");
 
   useEffect(() => {
     axios
@@ -20,12 +21,14 @@ const App = () => {
         <span>Find countries</span>
         <input
           onChange={(e) => {
-            setDisplay(false);
+            const contriesToShow = countries.filter((country) => {
+              return country.name.common
+                .toLowerCase()
+                .includes(e.target.value.toLowerCase().trim());
+            });
             setShown(
-              countries.filter((country) => {
-                return country.name.common
-                  .toLowerCase()
-                  .includes(e.target.value.toLowerCase().trim());
+              contriesToShow.map((c) => {
+                return { ...c, show: false };
               })
             );
             console.log(shown);
@@ -49,14 +52,35 @@ const App = () => {
         shown.map((item) => {
           return (
             <div key={item.name.common}>
-              <span key={item.name.common}>{item.name.common}</span>
+              <span>{item.name.common}</span>
               <button
                 onClick={() => {
-                  setDisplay(true);
+                  // setToShow(item.name.common);
+                  setShown(
+                    shown.map((c) => {
+                      return item.name.common === c.name.common
+                        ? { ...c, show: !c.show }
+                        : { ...c };
+                    })
+                  );
                 }}
               >
                 show
               </button>
+              {item.show ? (
+                <div key={item.name}>
+                  <h2>{item.name.common}</h2>
+                  <p>capital {item.capital[0]}</p>
+                  <p>area {item.area}</p>
+                  <h2>Languages</h2>
+                  {Object.keys(item.languages).map((k) => {
+                    return <p key={k}>{item.languages[k]}</p>;
+                  })}
+                  <h1>{item.flag}</h1>
+                </div>
+              ) : (
+                ""
+              )}
             </div>
           );
         })
