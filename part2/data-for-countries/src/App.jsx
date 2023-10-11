@@ -6,7 +6,7 @@ const App = () => {
   // const [display, setDisplay] = useState(false);
   // const [toshow, setToShow] = useState("");
   const [weather, setWeather] = useState();
-  const API_KEY = process.env.REACT_APP_MY_API_KEY;
+  const API_KEY = import.meta.env.VITE_MY_API_KEY;
 
   useEffect(() => {
     axios
