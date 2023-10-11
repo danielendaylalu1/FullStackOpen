@@ -5,12 +5,13 @@ const App = () => {
   const [shown, setShown] = useState([]);
   // const [display, setDisplay] = useState(false);
   // const [toshow, setToShow] = useState("");
+  const [weather, setWeather] = useState();
+  const API_KEY = process.env.REACT_APP_MY_API_KEY;
 
   useEffect(() => {
     axios
       .get(`https://studies.cs.helsinki.fi/restcountries/api/all`)
       .then((resp) => {
-        console.log(resp.data);
         setCountries(resp.data);
       });
   }, []);
@@ -31,7 +32,13 @@ const App = () => {
                 return { ...c, show: false };
               })
             );
-            console.log(shown);
+            if (contriesToShow.length === 1) {
+              axios
+                .get(
+                  `https://api.openweathermap.org/data/2.5/forecast?q=${contriesToShow[0].capital[0]}&appid=${API_KEY}`
+                )
+                .then((resp) => setWeather(resp.data));
+            }
           }}
         />
       </form>
@@ -65,7 +72,7 @@ const App = () => {
                   );
                 }}
               >
-                show
+                {!item.show ? "show" : "hide"}
               </button>
               {item.show ? (
                 <div key={item.name}>
