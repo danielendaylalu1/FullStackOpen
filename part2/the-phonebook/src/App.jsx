@@ -16,7 +16,7 @@ const App = () => {
   const [filter, setFilter] = useState("");
   const [message, setMessage] = useState(null);
   const personsToShow = persons.filter((person) =>
-    person.name.toLowerCase().includes(filter.trim())
+    person.name.includes(filter.toLowerCase().trim())
   );
 
   const addName = (e) => {
