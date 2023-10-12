@@ -15,8 +15,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
   const [message, setMessage] = useState(null);
-  const personsToShow = persons.filter((person) =>
-    person.name.includes(filter.toLowerCase().trim())
+  const personsToShow = persons.filter(
+    (person) => person.name && person.name.includes(filter.toLowerCase().trim())
   );
 
   const addName = (e) => {
@@ -32,14 +32,31 @@ const App = () => {
       const text = `${updatedPerson.name} is already added to phonebook, replace the old number with the new one ?`;
       if (confirm(text) === true) {
         const personObject = { ...updatedPerson, number: newNumber };
-        updatePerson(updatedPerson.id, personObject).then((data) => {
-          setPersons(
+        updatePerson(updatedPerson.id, personObject)
+          .then((data) => {
+            console.log(personObject);
             persons.map((person) =>
-              person.id !== personObject.id ? person : data
-            )
-          );
-        });
-        setMessage(`Old number is changed to ${newNumber}`);
+              person.id !== personObject.id
+                ? console.log(person)
+                : console.log(data)
+            );
+            setPersons(
+              persons.map((person) =>
+                person.id !== personObject.id ? person : data
+              )
+            );
+            setMessage({
+              text: `Old number is changed to ${newNumber}`,
+              color: "green",
+            });
+          })
+          .catch((error) => {
+            setMessage({
+              text: error.response.data.error,
+              color: "red",
+            });
+          });
+
         setTimeout(() => {
           setMessage(null);
         }, 3000);
@@ -50,12 +67,26 @@ const App = () => {
         number: newNumber.trim(),
         id: persons.length + 1,
       };
-      // setPersons(persons.concat(nameObject));
-      addPerson(nameObject).then((data) => setPersons(persons.concat(data)));
-      setMessage(`Added ${newName}`);
+
+      addPerson(nameObject)
+        .then((data) => {
+          setPersons(persons.concat(data));
+          setMessage({
+            text: `Added ${newName}`,
+            color: "green",
+          });
+        })
+        .catch((error) => {
+          setMessage({
+            text: error.response.data.error,
+            color: "red",
+          });
+          // console.log(error);
+        });
+
       setTimeout(() => {
         setMessage(null);
-      }, 3000);
+      }, 5000);
       setNewName("");
       setNewNumber("");
     }
