@@ -18,6 +18,8 @@ const App = () => {
   const personsToShow = persons.filter(
     (person) => person.name && person.name.includes(filter.toLowerCase().trim())
   );
+  const [error, setError] = useState("");
+  const [proccessing, setProccessing] = useState("");
 
   const addName = (e) => {
     e.preventDefault();
@@ -35,6 +37,7 @@ const App = () => {
         updatePerson(updatedPerson.id, personObject)
           .then((data) => {
             console.log(personObject);
+            setProccessing("");
             persons.map((person) =>
               person.id !== personObject.id
                 ? console.log(person)
@@ -51,6 +54,7 @@ const App = () => {
             });
           })
           .catch((error) => {
+            setProccessing("");
             setMessage({
               text: error.response.data.error,
               color: "red",
@@ -70,6 +74,7 @@ const App = () => {
 
       addPerson(nameObject)
         .then((data) => {
+          setProccessing("");
           setPersons(persons.concat(data));
           setMessage({
             text: `Added ${newName}`,
@@ -77,6 +82,7 @@ const App = () => {
           });
         })
         .catch((error) => {
+          setProccessing("");
           setMessage({
             text: error.response.data.error,
             color: "red",
@@ -116,24 +122,35 @@ const App = () => {
   };
 
   useEffect(() => {
-    getAllPersons().then((data) => setPersons(data));
+    setProccessing("proccesing....");
+    getAllPersons()
+      .then((data) => {
+        setProccessing("");
+        setPersons(data);
+      })
+      .catch((error) => {
+        setError(error.message);
+        setProccessing("");
+      });
   }, []);
   return (
     <div>
       <h2>Phonebook</h2>
       <Message message={message} />
+      <p>{proccessing}</p>
       <Filter filter={filter} handleFilter={handleFilter} />
       <h2>Add a new</h2>
 
       <PersonForm
         addName={addName}
+        setProccessing={setProccessing}
         newName={newName}
         handleNewName={handleNewName}
         newNumber={newNumber}
         handleNewNumber={handleNewNumber}
       />
       <h2>Numbers</h2>
-
+      {<p>{error}</p>}
       <Persons
         personsToShow={personsToShow}
         setPersons={setPersons}

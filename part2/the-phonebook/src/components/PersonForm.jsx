@@ -4,9 +4,15 @@ const PersonForm = ({
   handleNewName,
   newNumber,
   handleNewNumber,
+  setProccessing,
 }) => {
   return (
-    <form onSubmit={addName}>
+    <form
+      onSubmit={(e) => {
+        setProccessing("proccessing....");
+        addName(e);
+      }}
+    >
       <div>
         name: <input value={newName} onChange={handleNewName} />
         <br />
